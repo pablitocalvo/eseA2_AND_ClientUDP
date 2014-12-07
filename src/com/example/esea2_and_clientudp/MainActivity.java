@@ -26,71 +26,60 @@ public class MainActivity extends Activity {
 
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 		numeroText = (TextView) findViewById(R.id.LO_numeroRicevuto);
 		IPAddressEditText = (EditText) findViewById(R.id.LO_indirizzoIp);
-		
-		
-		
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 	
 	public void  inviaRichiesta(View v)  throws UnknownHostException,IOException
-	{	
-		
+	{
 		new InviaERiceve().execute();
-
-	   
-        
-	    
 	}
 
 	
-	private class InviaERiceve extends AsyncTask<Void, Void, String> {
-        
+	private class InviaERiceve extends AsyncTask<Void, Void, String> 
+	{
         // onPostExecute displays the results of the AsyncTask.
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result)
+        {
         	numeroText.setText(result);
-       }
+        }
 		@Override
-		protected String doInBackground(Void... params) {
-			
+		protected String doInBackground(Void... params)
+		{
 			DatagramSocket socket;
+			
 			byte[] dati = new byte[10];
-			try {	
+			try 
+			{
 				
-					socket = new DatagramSocket ();
-					
-		            InetAddress address = InetAddress.getByName (IPAddressEditText.getText().toString());
-		            DatagramPacket packetDaInviare = new DatagramPacket ("REQ".getBytes(), "REQ".length(), address, 23365);
-		            socket.send (packetDaInviare);
+				socket = new DatagramSocket ();
+				
+				InetAddress address = InetAddress.getByName (IPAddressEditText.getText().toString());
+				DatagramPacket packetDaInviare = new DatagramPacket ("REQ".getBytes(), "REQ".length(), address, 23365);
+				socket.send (packetDaInviare);
+				DatagramPacket packetDaRicevere = new DatagramPacket (dati,10);
+				socket.receive(packetDaRicevere);
+				socket.close();
 		            
 		            
-		            
-		            DatagramPacket packetDaRicevere = new DatagramPacket (dati,10);
-		            socket.receive(packetDaRicevere);
-		            
-		            
-		            socket.close();
-		            
-		            
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+			catch (SocketException e) { e.printStackTrace(); } 
+			catch (IOException e) { e.printStackTrace(); }
+
 			return new String(dati);
 		}
     }
